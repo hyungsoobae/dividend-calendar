@@ -141,3 +141,6 @@ Spring AI 구조화 출력으로 Java record에 매핑.
 | 2026-09-11 | Spring Boot 4.1.x, Java 21 | Spring AI 2.0 스타터가 Boot 4.1 의존성 기준으로 배포됨. 3.5는 지원 종료 |
 | 2026-09-11 | GitHub 저장소 public, main 브랜치 보호(PR 필수) | 포트폴리오 공개 목적, 무료 플랜에서 브랜치 보호는 public만 적용됨 |
 | 2026-09-11 | 초기 프로젝트는 Spring Web만 포함, DB 의존성은 1단계에서 추가 | main을 항상 실행 가능한 상태로 유지 |
+| 2026-09-13 | 로컬 DB는 docker compose, 이미지 태그 고정(postgres:18-alpine) | 재현 가능한 개발 환경, latest 사용 시 메이저 업그레이드로 볼륨 깨짐. 18+ 는 /var/lib/postgresql 에 마운트 |
+| 2026-09-13 | DB 접속 정보와 API 키를 .env로 통일, .env.example 커밋 | compose가 .env를 자동 인식해 생성값과 접속값이 어긋나지 않음 |
+| 2026-09-13 | ddl-auto: none, 스키마 자동 생성 사용 안 함 | 스키마 변경 이력 추적. 마이그레이션 도구는 저장 단계에서 결정 |
