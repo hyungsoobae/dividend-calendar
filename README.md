@@ -3,7 +3,7 @@
 미국 주식 배당 일정을 자동 수집해 달력으로 보여주고, 종목별 AI 해설을 제공하는 프로젝트.
 
 - 설계: [docs/architecture.md](docs/architecture.md)
-- FMP API 분석: [docs/fmp-dividends-notes.md](docs/fmp-dividends-notes.md)
+- Massive API 분석: [docs/dividends-notes.md](docs/dividends-notes.md)
 
 ## 기술 스택
 
@@ -21,7 +21,7 @@
 cp .env.example .env
 ```
 
-`.env`를 열어 값을 채운다. `POSTGRES_PASSWORD`는 직접 정하고, `FMP_API_KEY`는 [FMP](https://site.financialmodelingprep.com)에서 발급받는다.
+`.env`를 열어 값을 채운다. `POSTGRES_PASSWORD`는 직접 정하고, `MASSIVE_API_KEY`는 [Massive](https://massive.com)에서 발급받는다.
 
 ### 2. PostgreSQL 실행
 
