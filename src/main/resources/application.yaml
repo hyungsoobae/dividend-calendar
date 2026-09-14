@@ -1,3 +1,13 @@
 spring:
   application:
     name: dividend-calendar
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    hibernate:
+      # 스키마를 코드가 자동 생성하지 않는다 (마이그레이션 도구는 저장 단계에서 결정)
+      ddl-auto: none
+    # 트랜잭션 밖에서 지연 로딩이 일어나는 것을 막는다
+    open-in-view: false
