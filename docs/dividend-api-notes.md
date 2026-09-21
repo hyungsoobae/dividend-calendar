@@ -60,7 +60,8 @@ FMP는 최상위가 배열이었지만 Massive는 객체로 감싸여 있다.
 - DB에는 **정수 그대로** 저장한다. enum으로 강제하면 새 값이 왔을 때 파싱이 깨진다
 - 화면 라벨은 매핑 함수로 처리하고, 모르는 값은 "연 N회"로 폴백
 - 발행사 선언값이 아니라 **추론값일 수 있다**. 이 값만으로 "배당이 빠졌다" 같은 판정을 하지 않는다
-- `0`은 특별배당 판별에 쓸 수 있다. 금액 이상치로 추정하던 것보다 정확
+- `0`을 특별배당 근거로 쓰지 않는다. AAPL의 2012년 배당 재개 직후 3건은 평범한 분기 배당인데
+  `frequency: 0`, `distribution_type: unknown`으로 분류되어 있다. 주기를 추론할 이력이 쌓이기 전으로 보인다
 
 ### 주의사항
 
@@ -86,12 +87,30 @@ FMP는 최상위가 배열이었지만 Massive는 객체로 감싸여 있다.
 FMP의 `yield`에 해당하는 필드가 없다. 필요하면 주가를 별도 호출해 계산해야 한다.
 AI 해설 입력 포함 여부는 M2에서 결정.
 
+**3. 페이징은 `next_url`**
+
+```json
+{ "results": [ ... ], "next_url": "https://api.massive.com/stocks/v1/dividends?cursor=..." }
+```
+
+- 다음 페이지가 없으면 필드가 없다
+- `next_url`에 API 키가 없다. 요청 시 직접 붙여야 한다
+- 원래 조건(ticker, limit 등)은 cursor에 담겨 있어 다시 붙이지 않는다
+- 외부가 준 URL에 키를 붙이므로, 호스트가 `api.massive.com`인지 확인한 뒤 요청한다
+- `sort`를 생략하면 배당락일 오름차순으로 온다
+
+**4. 이력 범위가 FMP보다 짧다**
+
+AAPL은 2012-08부터 온다. FMP는 1987년부터 줬다. 오래된 배당주는 연속 증액 연수가 짧게 계산될 수 있다.
+
+
 ### 확인 필요
 
-- [ ] 페이징 방식 (`limit` 상한 초과 시 `next_url` 등) — 최초 수집 시 필요
-- [ ] `distribution_type`의 다른 값 (특별배당 종목으로 확인)
+- [x] 페이징 방식 → `next_url` (cursor 기반, 키 미포함)
+- [ ] `limit` 상한
+- [ ] `distribution_type`의 다른 값 → `recurring`, `unknown` 확인. 특별배당 값은 미확인
 - [ ] 무료 플랜 호출 한도 (Polygon 시절 분당 5회, 개명 후 동일한지 미확인)
-- [ ] 오래된 데이터의 `declaration_date`가 null인지 빈 문자열인지
+- [x] 오래된 데이터의 `declaration_date` → 필드 누락 (null로 처리)
 
 ---
 
@@ -126,7 +145,8 @@ GET https://financialmodelingprep.com/stable/dividends?symbol={ticker}&apikey={k
 | date | LocalDate | 배당락일 (ex-dividend date) | 필드명이 `date`라 헷갈리기 쉬움. 우리 쪽에서는 `exDate`로 매핑 |
 | recordDate | LocalDate | 배당 기준일 | |
 | paymentDate | LocalDate | 지급일 | |
-| declarationDate | LocalDate (nullable) | 배당 선언일 | 과거 데이터에서 빈 문자열 `""`로 오는 경우 있음 |
+| declaration_date | LocalDate (nullable) | 선언일 | 빈 문자열이 아니라 **필드 자체가 없음**. 2021년 건에도 누락 사례 |
+| historical_adjustment_factor | BigDecimal (nullable) | 가격 조정 계수 | **분할 비율이 아님** (AAPL 2012년 0.837, 실제 누적 분할은 28:1). 조정 배당금 계산에 쓰지 않는다 |
 | dividend | BigDecimal | 당시 실제 배당금 (분할 미조정) | |
 | adjDividend | BigDecimal | 액면분할 조정 배당금 | 이력 비교는 이 값으로 |
 | yield | BigDecimal | 배당수익률 | 단위가 퍼센트 (0.34 = 0.34%) |
