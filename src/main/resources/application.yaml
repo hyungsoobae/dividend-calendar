@@ -11,3 +11,16 @@ spring:
       ddl-auto: none
     # 트랜잭션 밖에서 지연 로딩이 일어나는 것을 막는다
     open-in-view: false
+
+massive:
+  base-url: https://api.massive.com
+  api-key: ${MASSIVE_API_KEY}
+  # limit 상한은 미확인. 한 페이지에 최대한 담아 호출 수를 줄인다
+  page-limit: 500
+  # next_url이 끝없이 이어질 때를 대비한 안전장치
+  max-pages: 20
+  connect-timeout: 3s
+  read-timeout: 10s
+  # 총 호출 = 최초 1회 + 재시도 횟수
+  max-retries: 2
+  retry-delay: 1s
