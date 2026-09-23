@@ -16,7 +16,7 @@ GET https://api.massive.com/stocks/v1/dividends
 
 - 무료 키로 종목 제한 없이 조회 가능 (FMP에서 막혔던 O 포함)
 - 과거 이력과 **선언된 미래 배당**을 함께 반환
-- API 키는 쿼리 파라미터. 환경변수로 관리하고 로그에 URL 전체를 찍지 않는다
+- API 키는 `Authorization: Bearer {key}` 헤더로 보낸다. 쿼리 파라미터로도 되지만, I/O 예외 메시지에 요청 URL이 그대로 담겨 키가 로그에 남는다
 - 필드별 필터 지원 (`ex_dividend_date.gte` 등)
 
 ### 응답 구조
@@ -94,7 +94,7 @@ AI 해설 입력 포함 여부는 M2에서 결정.
 ```
 
 - 다음 페이지가 없으면 필드가 없다
-- `next_url`에 API 키가 없다. 요청 시 직접 붙여야 한다
+- `next_url`에 API 키가 없다. ~~요청 시 직접 붙여야 한다~ 헤더 인증이므로 그대로 호출하면 된다
 - 원래 조건(ticker, limit 등)은 cursor에 담겨 있어 다시 붙이지 않는다
 - 외부가 준 URL에 키를 붙이므로, 호스트가 `api.massive.com`인지 확인한 뒤 요청한다
 - `sort`를 생략하면 배당락일 오름차순으로 온다
