@@ -1,5 +1,6 @@
 package io.github.hyungsoobae.dividendcalendar.fetch.massive;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * @param results  배당 레코드 목록. 결과가 없어도 빈 배열로 오는지는 미확인
  * @param nextUrl  다음 페이지 주소. 필드명이 아직 확인되지 않았다 (실제 응답으로 검증 필요)
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record MassiveDividendResponse(
         String status,
         @JsonProperty("request_id") String requestId,

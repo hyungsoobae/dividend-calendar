@@ -1,5 +1,6 @@
 package io.github.hyungsoobae.dividendcalendar.fetch.massive;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
  * @param historicalAdjustmentFactor 조정 계수. 최신 건에는 없다. 현재 사용처는 없지만
  *                                   조정값 계산 근거를 추적할 수 있게 받아둔다
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record MassiveDividend(
         String id,
         String ticker,
